@@ -73,7 +73,10 @@ namespace WooCommerceNET
             {
                 if (httpWebRequest != null && httpWebRequest.HaveResponse)
                     if (we.Response != null)
-                        throw new Exception(await GetStreamContent(we.Response.GetResponseStream(), we.Response.ContentType.Split('=')[1]));
+                    {
+                        var contentTypeTokens = we.Response.ContentType.Split('=');
+                        throw new Exception(await GetStreamContent(we.Response.GetResponseStream(), contentTypeTokens.Length >= 2 ? contentTypeTokens[1] : "UTF-8"));
+                    }
                     else
                         throw we;
                 else

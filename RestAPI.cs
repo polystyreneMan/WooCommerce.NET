@@ -43,7 +43,15 @@ namespace WooCommerceNET
             HttpWebRequest httpWebRequest = null;
             try
             {
-                httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(wc_url + GetOAuthEndPoint(method.ToString(), endpoint, parms));
+                var querystring = GetOAuthEndPoint( method.ToString(), endpoint, parms );
+
+                if ( wc_url.StartsWith( "https", StringComparison.OrdinalIgnoreCase ) )
+                {
+                    querystring += !querystring.Contains( "?" ) ? "?" : "&";
+                    querystring += $"consumer_key={wc_key}&consumer_secret={wc_secret}";
+                }
+
+                httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(wc_url + querystring);
                 if (wc_url.StartsWith("https", StringComparison.OrdinalIgnoreCase))
                 {
                     httpWebRequest.Credentials = new NetworkCredential(wc_key, wc_secret);
